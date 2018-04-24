@@ -1,4 +1,5 @@
-﻿using PartOne.Helpers;
+﻿using PartOne.Components;
+using PartOne.Helpers;
 using System;
 using System.Linq;
 
@@ -9,20 +10,20 @@ namespace PartOne
         static void Main(string[] args)
         {
             var fileReader = new FileReader();
+            var kMeans = new KMeans();
             var data = fileReader.Parse(',', @"./Data/WineData.csv");
 
-            foreach (var vector in data.Where(q => q.Customer == 1).ToList())
-            {
-                Console.WriteLine("Customer " + vector.Customer + ":");
-                foreach (var offer in vector.Offers)
-                {
-                    var wine = offer.Key;
-                    var accepted = offer.Value;
-                    var taken = accepted == 1 ? "taken." : "not taken.";
+            //Set data for k-means algorithm
+            kMeans.Vectors = data;
 
-                    Console.WriteLine("\tWine nr. " + wine + " was " + taken);
-                }
-            }
+            //Get three random vectors
+            var markerOne = kMeans.GetRandomPoints();
+            var markerTwo = kMeans.GetRandomPoints();
+            var markerThree = kMeans.GetRandomPoints();
+
+            Console.WriteLine("Marker 1 at [" + markerOne.GetX() + ", " + markerOne.GetY() + "]");
+            Console.WriteLine("Marker 2 at [" + markerTwo.GetX() + ", " + markerTwo.GetY() + "]");
+            Console.WriteLine("Marker 3 at [" + markerThree.GetX() + ", " + markerThree.GetY() + "]");
 
             Console.ReadKey();
         }
