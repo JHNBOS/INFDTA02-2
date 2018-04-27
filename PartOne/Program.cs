@@ -39,14 +39,14 @@ namespace PartOne
             //Assign observations to cluster
             var clusters = kMeans.AssignObservations(clusterCenters);
 
-            Console.WriteLine("Cluster one has " + clusters.Where(q => q.Cluster == clusterCenters[0]).ToList().Count + " points");
-            Console.WriteLine("Cluster two has " + clusters.Where(q => q.Cluster == clusterCenters[1]).ToList().Count + " points");
-            Console.WriteLine("Cluster three has " + clusters.Where(q => q.Cluster == clusterCenters[2]).ToList().Count + " points");
+            Console.WriteLine("Cluster one has " + clusters.Where(q => q.Centroid == clusterCenters[0]).ToList().Count + " points");
+            Console.WriteLine("Cluster two has " + clusters.Where(q => q.Centroid == clusterCenters[1]).ToList().Count + " points");
+            Console.WriteLine("Cluster three has " + clusters.Where(q => q.Centroid == clusterCenters[2]).ToList().Count + " points");
 
-            Console.WriteLine("Point 1 has cluster at position [" + clusters[0].Cluster.X + ", " + clusters[0].Cluster.Y + "] as center.");
-            Console.WriteLine("Point 2 has cluster at position [" + clusters[1].Cluster.X + ", " + clusters[1].Cluster.Y + "] as center.");
-            Console.WriteLine("Point 3 has cluster at position [" + clusters[2].Cluster.X + ", " + clusters[2].Cluster.Y + "] as center.");
-            Console.WriteLine("Point 4 has cluster at position [" + clusters[3].Cluster.X + ", " + clusters[3].Cluster.Y + "] as center.");
+            //Console.WriteLine("Point 1 has cluster at position [" + clusters[0].Centroid.X + ", " + clusters[0].Centroid.Y + "] as center.");
+            //Console.WriteLine("Point 2 has cluster at position [" + clusters[1].Centroid.X + ", " + clusters[1].Centroid.Y + "] as center.");
+            //Console.WriteLine("Point 3 has cluster at position [" + clusters[2].Centroid.X + ", " + clusters[2].Centroid.Y + "] as center.");
+            //Console.WriteLine("Point 4 has cluster at position [" + clusters[3].Centroid.X + ", " + clusters[3].Centroid.Y + "] as center.");
         }
 
     }

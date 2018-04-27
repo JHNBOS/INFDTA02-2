@@ -13,7 +13,7 @@ namespace PartOne.Components
         {
             Random random = new Random();
             int randomCustomer = random.Next(1, this.Vectors.Count);
-            int randomOffer = random.Next(1, this.Vectors.FirstOrDefault(q => q.Id == randomCustomer).Points.Count);
+            int randomOffer = random.Next(0, 32);
 
             return new Point(randomCustomer, randomOffer);
         }
@@ -23,10 +23,10 @@ namespace PartOne.Components
             var clusters = new List<Vector>();
             var euclidian = new Euclidian();
 
-            for (int i = 0; i < this.Vectors.Count; i++)
+            Vectors.ForEach(vector =>
             {
-                this.Vectors[i].Points.ForEach(point => {
-
+                vector.Points.ForEach(point =>
+                {
                     var distances = new Dictionary<Point, double>();
                     foreach (var center in clusterCenters)
                     {
@@ -37,30 +37,28 @@ namespace PartOne.Components
 
                     //Assign to cluster with smallest distance
                     var smallestDistance = distances.OrderBy(o => o.Value).FirstOrDefault();
-                    point.Cluster = smallestDistance.Key;
+                    point.Centroid = smallestDistance.Key;
                 });
-            }
+            });
 
             //If over half of the observations have the same centroid, then assign this centroid as cluster of the vector
-            foreach (var vector in this.Vectors)
+            Vectors.ForEach(vector =>
             {
-                var one = vector.Points.Where(q => q.Cluster == clusterCenters[0]).ToList().Count;
-                var two = vector.Points.Where(q => q.Cluster == clusterCenters[1]).ToList().Count;
-                var three = vector.Points.Where(q => q.Cluster == clusterCenters[2]).ToList().Count;
-                var arr = new int[3];
-                arr[0] = one;
-                arr[1] = two;
-                arr[2] = three;
+                var divisions = new Dictionary<Point, int>();
+                foreach (var center in clusterCenters)
+                {
+                    var amount = vector.Points.Where(q => q.Centroid == center).ToList().Count;
+                    divisions.Add(center, amount);
+                }
 
-                var highest = arr.Max();
-                var index = arr.ToList().IndexOf(highest);
-
+                var highest = divisions.Values.Max();
+                var centroid = divisions.FirstOrDefault(q => q.Value == highest).Key;
                 if (highest >= 16)
                 {
-                    vector.Cluster = clusterCenters[index];
+                    vector.Centroid = centroid;
                     clusters.Add(vector);
                 }
-            }
+            });
 
             return clusters;
         }

@@ -21,31 +21,32 @@ namespace PartOne.Helpers
                 var wineCount = 0;
                 foreach (var line in lines)
                 {
-                    var customer = 0;
+                    var customer = 1;
                     var list = new List<int>();
 
                     foreach (var number in line)
                     {
-                        int offer;
-                        var isNumber = int.TryParse(number, out offer);
+                        int value;
+                        var isNumber = int.TryParse(number, out value);
 
+                        //Create customer
                         var newCustomer = new Vector();
                         newCustomer.Id = customer;
 
                         if (isNumber)
                         {
-                            var point = new Point();
-                            point.X = wineCount;
-                            point.Y = offer;
+                            var offer = new Point();
+                            offer.X = wineCount;
+                            offer.Y = value;
 
                             if (!entries.Any(q => q.Id == customer))
                             {
-                                newCustomer.Points.Add(point);
+                                newCustomer.Points.Add(offer);
                                 entries.Add(newCustomer);
                             }
                             else
                             {
-                                entries.FirstOrDefault(q => q.Id == customer).Points.Add(point);
+                                entries.FirstOrDefault(q => q.Id == customer).Points.Add(offer);
                             }
 
                             customer++;
