@@ -22,12 +22,12 @@ namespace PartOne
             Console.ReadKey();
         }
 
-        private static void StartClustering(Dictionary<int, List<Point>> data, int k)
+        private static void StartClustering(List<Vector> data, int k)
         {
             var kMeans = new KMeans();
 
             //Set data for k-means algorithm
-            kMeans.Points = data;
+            kMeans.Vectors = data;
 
             //Get three random vectors and add to array
             Point[] clusterCenters = new Point[k];
