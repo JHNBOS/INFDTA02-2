@@ -6,7 +6,7 @@ namespace PartOne.Models
     {
         public int Id { get; set; }
         public List<Point> Points { get; set; }
-        public Point Cluster { get; set; }
+        public Point Centroid { get; set; }
 
         #region Constructors
 
