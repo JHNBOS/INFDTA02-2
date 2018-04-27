@@ -1,6 +1,7 @@
 ﻿using PartOne.Models;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace PartOne.Components
 {
@@ -12,7 +13,6 @@ namespace PartOne.Components
         {
             Random random = new Random();
             int randomCustomer = random.Next(1, this.Vectors.Count);
-<<<<<<< HEAD
             int randomOffer = random.Next(1, this.Vectors.FirstOrDefault(q => q.Id == randomCustomer).Points.Count);
 
             return new Point(randomCustomer, randomOffer);
@@ -64,11 +64,5 @@ namespace PartOne.Components
 
             return clusters;
         }
-=======
-            int randomOffer = random.Next(1, this.Vectors[randomCustomer].Offers.Count);
-
-            return new Point(randomCustomer, randomOffer);
-        }
->>>>>>> parent of 62d9efd... Assign to cluster
     }
 }
