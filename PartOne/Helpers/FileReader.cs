@@ -9,9 +9,9 @@ namespace PartOne.Helpers
 {
     public class FileReader
     {
-        public List<Vector> Parse(char delimiter, string path)
+        public Dictionary<int, List<Point>> Parse(char delimiter, string path)
         {
-            var entries = new List<Vector>();
+            var entries = new Dictionary<int, List<Point>>();
 
             try
             {
@@ -30,18 +30,19 @@ namespace PartOne.Helpers
                         var isNumber = int.TryParse(number, out offer);
                         if (isNumber)
                         {
-                            var vector = new Vector();
-                            vector.Customer = customer;
-                            vector.Offers.Add(wineCount, offer);
+                            var point = new Point();
+                            point.X = wineCount;
+                            point.Y = offer;
 
-                            if (!entries.Any(q => q.Customer == vector.Customer))
+                            if (!entries.Any(q => q.Key == customer))
                             {
-                                entries.Add(vector);
+                                entries.Add(customer, new List<Point>() { point });
                             }
                             else
                             {
-                                entries.FirstOrDefault(q => q.Customer == vector.Customer).Offers.Add(wineCount, offer);
+                                entries.FirstOrDefault(q => q.Key == customer).Value.Add(point);
                             }
+
                             customer++;
                         }
                     }
