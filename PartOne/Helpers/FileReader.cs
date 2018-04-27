@@ -18,10 +18,10 @@ namespace PartOne.Helpers
                 var lines = File.ReadAllLines(path)
                     .Select(l => l.Split(delimiter).ToList());
 
-                var wineCount = 1;
+                var wineCount = 0;
                 foreach (var line in lines)
                 {
-                    var customer = 1;
+                    var customer = 0;
                     var list = new List<int>();
 
                     foreach (var number in line)

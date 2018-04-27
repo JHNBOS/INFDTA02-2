@@ -23,10 +23,10 @@ namespace PartOne.Components
             var clusters = new List<Vector>();
             var euclidian = new Euclidian();
 
-            foreach (var vector in this.Vectors)
+            for (int i = 0; i < this.Vectors.Count; i++)
             {
-                foreach (var point in vector.Points)
-                {
+                this.Vectors[i].Points.ForEach(point => {
+
                     var distances = new Dictionary<Point, double>();
                     foreach (var center in clusterCenters)
                     {
@@ -38,7 +38,7 @@ namespace PartOne.Components
                     //Assign to cluster with smallest distance
                     var smallestDistance = distances.OrderBy(o => o.Value).FirstOrDefault();
                     point.Cluster = smallestDistance.Key;
-                }
+                });
             }
 
             //If over half of the observations have the same centroid, then assign this centroid as cluster of the vector
