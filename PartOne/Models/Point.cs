@@ -4,7 +4,7 @@
     {
         public int X { get; set; }
         public int Y { get; set; }
-        public Point Cluster { get; set; }
+        public Point Centroid { get; set; }
 
         public Point() {}
 
