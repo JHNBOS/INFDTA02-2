@@ -7,60 +7,63 @@ namespace PartOne.Components
 {
     public class KMeans
     {
-        public List<Vector> Vectors { get; set; }
+        private List<Vector> Vectors { get; set; }
+        private List<Vector> Centroids { get; set; }
+        private int Clusters { get; set; }
+        private int Loops { get; set; }
 
-        public Point GetRandomPoints()
+        public KMeans(List<Vector> vectors, int clusters, int loops)
         {
-            Random random = new Random();
-            int randomCustomer = random.Next(1, this.Vectors.Count);
-            int randomOffer = random.Next(0, 32);
-
-            return new Point(randomCustomer, randomOffer);
+            this.Vectors = vectors;
+            this.Clusters = clusters;
+            this.Loops = loops;
         }
 
-        public List<Vector> AssignObservations(Point[] clusterCenters)
+        public List<Vector> GetVectors()
         {
-            var clusters = new List<Vector>();
-            var euclidian = new Euclidian();
+            return this.Vectors;
+        }
 
-            Vectors.ForEach(vector =>
+        private void GenerateCentroids(int clusters)
+        {
+            for (int i = 0; i < clusters; i++)
             {
-                vector.Points.ForEach(point =>
+                Centroids.Add(GetRandomVector());
+            }
+        }
+
+        private Vector GetRandomVector()
+        {
+            Random random = new Random();
+            int randomNumber = random.Next(1, this.Vectors.Count);
+
+            return this.Vectors[randomNumber];
+        }
+
+
+        public void AssignObservations()
+        {
+            // Generate centroids
+            GenerateCentroids(this.Clusters);
+
+            for (int i = 0; i < this.Loops; i++)
+            {
+                foreach (var vector in this.Vectors)
                 {
-                    var distances = new Dictionary<Point, double>();
-                    foreach (var center in clusterCenters)
+                    var distances = new Dictionary<Vector, double>();
+                    foreach (var centroid in this.Centroids)
                     {
                         //Calculate Euclidian distance between each cluster center
-                        var distance = euclidian.Calculate(point, center);
-                        distances.Add(center, distance);
+                        var distance = new Euclidian().Calculate(vector, centroid);
+                        distances.Add(centroid, distance);
                     }
 
                     //Assign to cluster with smallest distance
                     var smallestDistance = distances.OrderBy(o => o.Value).FirstOrDefault();
-                    point.Centroid = smallestDistance.Key;
-                });
-            });
-
-            //If over half of the observations have the same centroid, then assign this centroid as cluster of the vector
-            Vectors.ForEach(vector =>
-            {
-                var divisions = new Dictionary<Point, int>();
-                foreach (var center in clusterCenters)
-                {
-                    var amount = vector.Points.Where(q => q.Centroid == center).ToList().Count;
-                    divisions.Add(center, amount);
+                    vector.SetCentroid(smallestDistance.Key);
                 }
+            }
 
-                var highest = divisions.Values.Max();
-                var centroid = divisions.FirstOrDefault(q => q.Value == highest).Key;
-                if (highest >= 16)
-                {
-                    vector.Centroid = centroid;
-                    clusters.Add(vector);
-                }
-            });
-
-            return clusters;
         }
     }
 }

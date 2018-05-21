@@ -3,7 +3,6 @@ using PartOne.Helpers;
 using PartOne.Models;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace PartOne
 {
@@ -17,36 +16,24 @@ namespace PartOne
             var data = fileReader.Parse(',', @"./Data/WineData.csv");
 
             //Start clustering
-            StartClustering(data, 3);
+            StartClustering(data, 4, 5);
 
             Console.ReadKey();
         }
 
-        private static void StartClustering(List<Vector> data, int k)
+        private static void StartClustering(List<Vector> data, int clusters, int loops)
         {
-            var kMeans = new KMeans();
+            var kMeans = new KMeans(data, clusters, loops);
 
-            //Set data for k-means algorithm
-            kMeans.Vectors = data;
+            ////Assign observations to cluster
+            kMeans.AssignObservations();
 
-            //Get three random vectors and add to array
-            Point[] clusterCenters = new Point[k];
-            for (int totalCenters = 0; totalCenters < k; totalCenters++)
-            {
-                clusterCenters[totalCenters] = kMeans.GetRandomPoints();
-            }
+            var vectors = kMeans.GetVectors();
 
-            //Assign observations to cluster
-            var clusters = kMeans.AssignObservations(clusterCenters);
-
-            Console.WriteLine("Cluster one has " + clusters.Where(q => q.Centroid == clusterCenters[0]).ToList().Count + " points");
-            Console.WriteLine("Cluster two has " + clusters.Where(q => q.Centroid == clusterCenters[1]).ToList().Count + " points");
-            Console.WriteLine("Cluster three has " + clusters.Where(q => q.Centroid == clusterCenters[2]).ToList().Count + " points");
-
-            //Console.WriteLine("Point 1 has cluster at position [" + clusters[0].Centroid.X + ", " + clusters[0].Centroid.Y + "] as center.");
-            //Console.WriteLine("Point 2 has cluster at position [" + clusters[1].Centroid.X + ", " + clusters[1].Centroid.Y + "] as center.");
-            //Console.WriteLine("Point 3 has cluster at position [" + clusters[2].Centroid.X + ", " + clusters[2].Centroid.Y + "] as center.");
-            //Console.WriteLine("Point 4 has cluster at position [" + clusters[3].Centroid.X + ", " + clusters[3].Centroid.Y + "] as center.");
+            Console.WriteLine("Point 1 has cluster at position [" + vectors[0].GetCentroid() + "as center.");
+            Console.WriteLine("Point 2 has cluster at position [" + vectors[1].GetCentroid() + "as center.");
+            Console.WriteLine("Point 3 has cluster at position [" + vectors[2].GetCentroid() + "as center.");
+            Console.WriteLine("Point 4 has cluster at position [" + vectors[3].GetCentroid() + "as center.");
         }
 
     }
