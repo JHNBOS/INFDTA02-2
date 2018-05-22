@@ -4,17 +4,17 @@ namespace PartOne.Models
 {
     public class Vector
     {
-        private Dictionary<int, int> Points { get; set; }
+        private List<int> Points { get; set; }
         private Vector Centroid { get; set; }
 
         #region Constructors
 
         public Vector()
         {
-            this.Points = new Dictionary<int, int>();
+            this.Points = new List<int>();
         }
 
-        public Vector(Dictionary<int, int> points)
+        public Vector(List<int> points)
         {
             this.Points = points;
         }
@@ -28,14 +28,14 @@ namespace PartOne.Models
             return this.Points.Count;
         }
 
-        public Dictionary<int, int> GetPoints()
+        public List<int> GetPoints()
         {
             return this.Points;
         }
 
-        public void AddPoint(int key, int point)
+        public void AddPoint(int point)
         {
-            this.Points.Add(key, point);
+            this.Points.Add(point);
         }
 
         public Vector GetCentroid()

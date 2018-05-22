@@ -21,9 +21,9 @@ namespace PartOne
             Console.ReadKey();
         }
 
-        private static void StartClustering(List<Vector> data, int clusters, int loops)
+        private static void StartClustering(List<Vector> data, int clusters, int iterations)
         {
-            var kMeans = new KMeans(data, clusters, loops);
+            var kMeans = new KMeans(data, clusters, iterations);
 
             ////Assign observations to cluster
             kMeans.AssignObservations();

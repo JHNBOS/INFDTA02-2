@@ -30,7 +30,7 @@ namespace PartOne.Helpers
                     for (int j = 0; j < line.Count(); j++)
                     {
                         var currentItem = line[j];
-                        entries[i].AddPoint(j, int.Parse(currentItem));
+                        entries[i].AddPoint(int.Parse(currentItem));
                     }
                 }
             }
