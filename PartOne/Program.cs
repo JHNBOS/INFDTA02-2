@@ -29,11 +29,6 @@ namespace PartOne
             kMeans.AssignObservations();
 
             var vectors = kMeans.GetVectors();
-
-            Console.WriteLine("Point 1 has cluster at position [" + vectors[0].GetCentroid() + "as center.");
-            Console.WriteLine("Point 2 has cluster at position [" + vectors[1].GetCentroid() + "as center.");
-            Console.WriteLine("Point 3 has cluster at position [" + vectors[2].GetCentroid() + "as center.");
-            Console.WriteLine("Point 4 has cluster at position [" + vectors[3].GetCentroid() + "as center.");
         }
 
     }

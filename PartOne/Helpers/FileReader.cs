@@ -1,6 +1,7 @@
 ﻿using PartOne.Models;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 
@@ -19,22 +20,27 @@ namespace PartOne.Helpers
 
                 for (int i = 0; i < lines.Count(); i++)
                 {
-                    for (int j = 0; j < lines[i].Count(); j++)
-                    {
-                        var item = lines[i];
-                        if (entries.ElementAtOrDefault(j) == null)
-                        {
-                            entries.Add(new Vector());
-                        }
+                    var line = lines[i];
 
-                        entries[j].AddPoint(int.Parse(item[j]));
+                    if (entries.ElementAtOrDefault(i) == null)
+                    {
+                        entries.Insert(i, new Vector());
+                    }
+
+                    for (int j = 0; j < line.Count(); j++)
+                    {
+                        var currentItem = line[j];
+                        entries[i].AddPoint(j, int.Parse(currentItem));
                     }
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine("\nInvalid file path...");
+                Debug.WriteLine(ex);
+
+                Console.WriteLine("\nAn error occured while parsing the file...");
                 Console.ReadKey();
+
                 Environment.Exit(0);
             }
 

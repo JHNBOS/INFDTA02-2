@@ -15,6 +15,7 @@ namespace PartOne.Components
         public KMeans(List<Vector> vectors, int clusters, int loops)
         {
             this.Vectors = vectors;
+            this.Centroids = new List<Vector>();
             this.Clusters = clusters;
             this.Loops = loops;
         }
@@ -28,16 +29,20 @@ namespace PartOne.Components
         {
             for (int i = 0; i < clusters; i++)
             {
-                Centroids.Add(GetRandomVector());
+                var centroid = GetRandomVector();
+                if (this.Centroids.FirstOrDefault(q => q == centroid) == null)
+                {
+                    Centroids.Add(centroid);
+                }
             }
         }
 
         private Vector GetRandomVector()
         {
             Random random = new Random();
-            int randomNumber = random.Next(1, this.Vectors.Count);
+            int randomNumber = random.Next(0, this.Vectors.Count - 1);
 
-            return this.Vectors[randomNumber];
+            return this.Vectors.ElementAtOrDefault(randomNumber);
         }
 
 
