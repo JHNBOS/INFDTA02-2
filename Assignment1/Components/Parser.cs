@@ -1,13 +1,12 @@
-﻿using PartOne.Models;
+﻿using Assignment1.Entities;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 
-namespace PartOne.Helpers
+namespace Assignment1.Components
 {
-    public class FileReader
+    public class Parser
     {
         public List<Vector> Parse(char delimiter, string path)
         {
@@ -22,22 +21,23 @@ namespace PartOne.Helpers
                 {
                     var line = lines[i];
 
-                    if (entries.ElementAtOrDefault(i) == null)
+                    for (int j = 0; j < line.Length; j++)
                     {
-                        entries.Insert(i, new Vector());
-                    }
-
-                    for (int j = 0; j < line.Count(); j++)
-                    {
-                        var currentItem = line[j];
-                        entries[i].AddPoint(double.Parse(currentItem));
+                        if (entries.FirstOrDefault(q => q.Id == i) == null)
+                        {
+                            var vector = new Vector();
+                            vector.Id = i;
+                        }
+                        else
+                        {
+                            var vector = entries.FirstOrDefault(q => q.Id == i);
+                            vector.Points.Insert(j, double.Parse(line[j]));
+                        }
                     }
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                Debug.WriteLine(ex);
-
                 Console.WriteLine("\nAn error occured while parsing the file...");
                 Console.ReadKey();
 

@@ -4,19 +4,18 @@ namespace PartOne.Models
 {
     public class Vector
     {
-        private List<int> Points { get; set; }
-        private Vector Centroid { get; set; }
+        private List<double> Points { get; set; }
 
         #region Constructors
 
         public Vector()
         {
-            this.Points = new List<int>();
+            this.Points = new List<double>();
         }
 
-        public Vector(List<int> points)
+        public Vector(int dimension)
         {
-            this.Points = points;
+            this.Points = new List<double>(dimension);
         }
 
         #endregion
@@ -28,24 +27,14 @@ namespace PartOne.Models
             return this.Points.Count;
         }
 
-        public List<int> GetPoints()
+        public List<double> GetPoints()
         {
             return this.Points;
         }
 
-        public void AddPoint(int point)
+        public void AddPoint(double point)
         {
             this.Points.Add(point);
-        }
-
-        public Vector GetCentroid()
-        {
-            return this.Centroid;
-        }
-
-        public void SetCentroid(Vector centroid)
-        {
-            this.Centroid = centroid;
         }
 
         #endregion

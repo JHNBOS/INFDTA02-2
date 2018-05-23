@@ -8,14 +8,14 @@ namespace PartOne.Components
     public class KMeans
     {
         private List<Vector> Vectors { get; set; }
-        private List<Vector> Centroids { get; set; }
+        private List<Centroid> Centroids { get; set; }
         private int Clusters { get; set; }
         private int Iterations { get; set; }
 
         public KMeans(List<Vector> vectors, int clusters, int iterations)
         {
             this.Vectors = vectors;
-            this.Centroids = new List<Vector>();
+            this.Centroids = new List<Centroid>();
             this.Clusters = clusters;
             this.Iterations = iterations;
         }
@@ -29,10 +29,10 @@ namespace PartOne.Components
         {
             for (int i = 0; i < this.Clusters; i++)
             {
-                var centroid = GetRandomVector();
-                if (this.Centroids.FirstOrDefault(q => q == centroid) == null)
+                var randomVector = GetRandomVector();
+                if (this.Centroids.FirstOrDefault(q => q.Data == randomVector) == null)
                 {
-                    Centroids.Add(centroid);
+                    Centroids.Add(new Centroid(randomVector, i));
                 }
             }
         }
@@ -54,17 +54,17 @@ namespace PartOne.Components
             {
                 foreach (var vector in this.Vectors)
                 {
-                    var distances = new Dictionary<Vector, double>();
+                    var lowestDistance = double.PositiveInfinity;
                     foreach (var centroid in this.Centroids)
                     {
                         //Calculate Euclidian distance between each cluster center
-                        var distance = new Euclidian().Calculate(vector, centroid);
-                        distances.Add(centroid, distance);
+                        var distance = new Euclidian().Calculate(vector, centroid.Data);
+                        if (distance < lowestDistance)
+                        {
+                            lowestDistance = distance;
+                            client.ClusterNumber = centroid.Number;
+                        }
                     }
-
-                    //Assign to cluster with smallest distance
-                    var smallestDistance = distances.OrderBy(o => o.Value).FirstOrDefault();
-                    vector.SetCentroid(smallestDistance.Key);
                 }
 
                 this.Vectors = UpdateCentroids();
@@ -96,6 +96,26 @@ namespace PartOne.Components
             }
 
             return vectors;
+        }
+
+        public Vector Mean(List<Vector> points, int length)
+        {
+            var newVector = new Vector(length);
+
+            foreach (var vector in points)
+            {
+                for (int i = 0; i < newVector.GetPoints().Count; i++)
+                {
+                    newVector.AddPoint(vector.GetPoints()[i]);
+                }
+            }
+
+            for (int i = 0; i < newVector.GetPoints().Count; i++)
+            {
+                newVector.GetPoints()[i] = (double)newVector.GetPoints()[i] / points.Count;
+            }
+
+            return newVector;
         }
 
     }
