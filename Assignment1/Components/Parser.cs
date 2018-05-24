@@ -31,7 +31,7 @@ namespace Assignment1.Components
                         else
                         {
                             var vector = entries.FirstOrDefault(q => q.Id == i);
-                            vector.Points.Insert(j, double.Parse(line[j]));
+                            vector.Points.Insert(j, float.Parse(line[j]));
                         }
                     }
                 }

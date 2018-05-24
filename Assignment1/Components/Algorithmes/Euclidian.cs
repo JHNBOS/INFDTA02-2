@@ -5,12 +5,12 @@ namespace Assignment1.Components.Algorithmes
 {
     public class Euclidian
     {
-        public double Calculate(Vector vectorA, Vector vectorB)
+        public double Calculate(Vector vector, Cluster centroid)
         {
             double similarity = 0;
-            for (int i = 0; i < vectorA.Points.Count; i++)
+            for (int i = 0; i < vector.Points.Count; i++)
             {
-                similarity += Math.Pow(vectorA.Points[i] - vectorB.Points[i], 2);
+                similarity += Math.Pow(vector.Points[i] - centroid.Data[i], 2);
             }
 
             return Math.Sqrt(similarity);
