@@ -25,14 +25,13 @@ namespace Assignment1.Components
                     {
                         if (entries.FirstOrDefault(q => q.Id == i) == null)
                         {
-                            var vector = new Vector();
-                            vector.Id = i;
+                            var newVector = new Vector();
+                            newVector.Id = i;
+                            entries.Insert(i, newVector);
                         }
-                        else
-                        {
-                            var vector = entries.FirstOrDefault(q => q.Id == i);
-                            vector.Points.Insert(j, float.Parse(line[j]));
-                        }
+
+                        var vector = entries.FirstOrDefault(q => q.Id == i);
+                        vector.Points.Insert(j, float.Parse(line[j]));
                     }
                 }
             }

@@ -6,6 +6,7 @@ namespace Assignment1.Entities
     {
         public int Number { get; set; }
         public List<float> Data { get; set; }
+        public bool IsMoving { get; set; }
 
         public Cluster()
         {
