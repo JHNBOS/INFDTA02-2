@@ -23,14 +23,13 @@ namespace Assignment1.Components
 
                     for (int j = 0; j < line.Length; j++)
                     {
-                        if (entries.FirstOrDefault(q => q.Id == i) == null)
+                        if (entries.ElementAtOrDefault(i) == null)
                         {
                             var newVector = new Vector();
-                            newVector.Id = i;
                             entries.Insert(i, newVector);
                         }
 
-                        var vector = entries.FirstOrDefault(q => q.Id == i);
+                        var vector = entries.ElementAtOrDefault(i);
                         vector.Points.Insert(j, float.Parse(line[j]));
                     }
                 }

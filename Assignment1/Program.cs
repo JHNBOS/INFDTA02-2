@@ -13,9 +13,9 @@ namespace Assignment1
 
             var iterations = 5;
             var clusters = 4;
-
+            
             var kMeans = new Kmeans(data, iterations, clusters);
-            kMeans.Run(1000);
+            kMeans.Run(10);
 
             Console.Read();
         }

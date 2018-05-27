@@ -4,10 +4,8 @@ namespace Assignment1.Entities
 {
     public class Vector
     {
-        public int Id { get; set; }
-        public int Cluster { get; set; }
         public List<float> Points { get; set; }
-        public double Distance { get; set; }
+        public double? Distance { get; set; }
 
         #region Constructors
 
