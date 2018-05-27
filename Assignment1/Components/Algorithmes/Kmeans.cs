@@ -11,6 +11,8 @@ namespace Assignment1.Components.Algorithmes
         private List<Cluster> Clusters { get; set; }
         private int Iterations { get; set; }
         private int K { get; set; }
+        private double SSE { get; set; }
+        private Cluster Best { get; set; }
 
         public Kmeans(List<Vector> data, int iterations, int k)
         {
@@ -22,12 +24,24 @@ namespace Assignment1.Components.Algorithmes
 
         public void Run(int times)
         {
+            var temp = 0d;
             this.GenerateClusters();
 
             for (int i = 0; i < times; i++)
             {
                 this.AssignObservations();
+                foreach (var cluster in this.Clusters)
+                {
+                    SSE = this.CalculateSSE(cluster);
+                    if (temp < SSE)
+                    {
+                        temp = SSE;
+                        Best = cluster;
+                    }
+                }
             }
+
+            Console.WriteLine("Best cluster is " + Best.Id);
         }
 
         private void GenerateClusters()
@@ -119,5 +133,15 @@ namespace Assignment1.Components.Algorithmes
             }
         }
 
+        private double CalculateSSE(Cluster cluster)
+        {
+            double SSE = 0;
+            foreach (var point in cluster.Points)
+            {
+                SSE += Math.Pow(point.Distance.Value, 2);
+            }
+
+            return SSE;
+        }
     }
 }
