@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Assignment1.Components.Algorithmes
+namespace Assignment1.Components.Algorithms
 {
     public class Kmeans
     {
@@ -22,8 +22,10 @@ namespace Assignment1.Components.Algorithmes
             this.K = k;
         }
 
-        public void Run(int times)
+        public List<Result> Run(int times)
         {
+            var results = new List<Result>();
+
             var temp = 0d;
             this.GenerateClusters();
 
@@ -38,10 +40,21 @@ namespace Assignment1.Components.Algorithmes
                         temp = SSE;
                         Best = cluster;
                     }
+
+                    if (results.FirstOrDefault(q => q.Cluster == cluster) == null)
+                    {
+                        results.Add(new Result
+                        {
+                            Cluster = cluster,
+                            SSE = SSE
+                        });
+                    }
+                    
                 }
             }
 
             Console.WriteLine("Best cluster is " + Best.Id);
+            return results.OrderBy(o => o.SSE).Take(4).ToList();
         }
 
         private void GenerateClusters()

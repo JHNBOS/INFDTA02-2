@@ -1,5 +1,5 @@
 ﻿using Assignment1.Components;
-using Assignment1.Components.Algorithmes;
+using Assignment1.Components.Algorithms;
 using System;
 
 namespace Assignment1
@@ -15,7 +15,7 @@ namespace Assignment1
             var clusters = 4;
             
             var kMeans = new Kmeans(data, iterations, clusters);
-            kMeans.Run(50);
+            var result = kMeans.Run(50);
 
             Console.Read();
         }

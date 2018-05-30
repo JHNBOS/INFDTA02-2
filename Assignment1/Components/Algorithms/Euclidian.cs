@@ -1,7 +1,7 @@
 ﻿using Assignment1.Entities;
 using System;
 
-namespace Assignment1.Components.Algorithmes
+namespace Assignment1.Components.Algorithms
 {
     public class Euclidian
     {
