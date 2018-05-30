@@ -8,56 +8,59 @@ namespace Assignment1.Components.Algorithms
     public class Kmeans
     {
         private List<Vector> Data { get; set; }
-        private List<Cluster> Clusters { get; set; }
+        private List<Vector> Centroids { get; set; }
+        private int Clusters { get; set; }
         private int Iterations { get; set; }
         private int K { get; set; }
         private double SSE { get; set; }
         private Cluster Best { get; set; }
+        private List<Result> Results { get; set; }
 
-        public Kmeans(List<Vector> data, int iterations, int k)
+        public Kmeans(List<Vector> data, int iterations, int k, int cluster)
         {
             this.Data = data;
-            this.Clusters = new List<Cluster>();
+            this.Clusters = cluster;
+            this.Centroids = new List<Vector>();
             this.Iterations = iterations;
             this.K = k;
         }
 
-        public List<Result> Run(int times)
-        {
-            var results = new List<Result>();
+        //public List<Result> Run(int times)
+        //{
+        //    var results = new List<Result>();
 
-            var temp = 0d;
-            this.GenerateClusters();
+        //    var temp = 0d;
+        //    this.GenerateClusters();
 
-            for (int i = 0; i < times; i++)
-            {
-                this.AssignObservations();
-                foreach (var cluster in this.Clusters)
-                {
-                    SSE = this.CalculateSSE(cluster);
-                    if (temp < SSE)
-                    {
-                        temp = SSE;
-                        Best = cluster;
-                    }
+        //    for (int i = 0; i < times; i++)
+        //    {
+        //        this.AssignObservations();
+        //        foreach (var cluster in this.Clusters)
+        //        {
+        //            SSE = this.CalculateSSE(cluster);
+        //            if (temp < SSE)
+        //            {
+        //                temp = SSE;
+        //                Best = cluster;
+        //            }
 
-                    if (results.FirstOrDefault(q => q.Cluster == cluster) == null)
-                    {
-                        results.Add(new Result
-                        {
-                            Cluster = cluster,
-                            SSE = SSE
-                        });
-                    }
-                    
-                }
-            }
+        //            if (results.FirstOrDefault(q => q.Cluster == cluster) == null)
+        //            {
+        //                results.Add(new Result
+        //                {
+        //                    Cluster = cluster,
+        //                    SSE = SSE
+        //                });
+        //            }
 
-            Console.WriteLine("Best cluster is " + Best.Id);
-            return results.OrderBy(o => o.SSE).Take(4).ToList();
-        }
+        //        }
+        //    }
 
-        private void GenerateClusters()
+        //    Console.WriteLine("Best cluster is " + Best.Id);
+        //    return results.OrderBy(o => o.SSE).Take(4).ToList();
+        //}
+
+        private void GenerateCentroids()
         {
             var random = new Random();
             for (int i = 0; i < this.K; i++)
@@ -65,25 +68,24 @@ namespace Assignment1.Components.Algorithms
                 var randomIndex = random.Next(0, this.Data.Count);
                 var centroid = this.Data.ElementAtOrDefault(randomIndex);
 
-                var cluster = new Cluster(i, centroid);
-                if (!this.Clusters.Contains(cluster))
+                if (!this.Centroids.Contains(centroid))
                 {
-                    this.Clusters.Add(cluster);
+                    this.Centroids.Add(centroid);
                 }
             }
         }
 
         private void AssignObservations()
         {
-            int currentIteration = 0;
-            while (currentIteration < this.Iterations)
+            for (int i = 0; i < this.Iterations; i++)
             {
+                var currentCentroids = this.Centroids;
                 foreach (var vector in this.Data)
                 {
                     var smallestDistance = double.PositiveInfinity;
-                    foreach (var cluster in this.Clusters)
+                    foreach (var centroid in this.Centroids)
                     {
-                        var distance = new Euclidian().Calculate(vector, cluster.Centroid);
+                        var distance = new Euclidian().Calculate(vector, centroid);
                         if (distance < smallestDistance)
                         {
                             smallestDistance = distance;
@@ -92,58 +94,41 @@ namespace Assignment1.Components.Algorithms
                         if (distance < vector.Distance || !vector.Distance.HasValue)
                         {
                             vector.Distance = distance;
-                            if (!cluster.Points.Contains(vector))
-                            {
-                                this.Clusters.ForEach(f =>
-                                {
-                                    if (f.Points.Contains(vector))
-                                    {
-                                        f.Points.Remove(vector);
-                                    }
-                                });
-
-                                cluster.Points.Add(vector);
-                            }
+                            vector.Centroid = this.Centroids.IndexOf(centroid);
                         }
                     }
                 }
 
-                currentIteration++;
-            }
+                this.UpdateCentroids();
 
-            this.UpdateCentroids();
+                if (StoppedChanging(currentCentroids))
+                {
+                    Console.WriteLine("Finished in " + i + " iterations");
+                    break;
+                }
+            }
         }
 
         private void UpdateCentroids()
         {
-            var meansList = new Dictionary<Vector, float>();
-            var average = 0f;
-
-            foreach (var cluster in this.Clusters)
+            for (int currentCentroid = 0; currentCentroid < this.Clusters; currentCentroid++)
             {
-                foreach (var vector in cluster.Points)
-                {
-                    var mean = vector.Points.Sum() / vector.Points.Count;
-                    if (!meansList.ContainsKey(vector))
-                    {
-                        meansList.Add(vector, mean);
-                    }
-                    else if (meansList.ContainsKey(vector))
-                    {
-                        if (mean < meansList[vector])
-                        {
-                            meansList[vector] = mean;
-                        }
-                    }
+                var clusterPoints = this.Data.Where(q => q.Centroid == currentCentroid).ToList();
+                var newCluster = new Vector(this.Data.First().Points.Count);
 
-                    average += mean;
-                }
-
-                var closest = meansList.OrderBy(item => Math.Abs(average - item.Value)).First();
-
-                // Update centroid of current cluster
-                cluster.Centroid = closest.Key;
+                this.Centroids[currentCentroid] = newCluster;
             }
+        }
+
+        private bool StoppedChanging(List<Vector> oldCentroids)
+        {
+            var stopped = false;
+            if (this.Centroids.Except(oldCentroids).ToList() == oldCentroids)
+            {
+                stopped = true;
+            }
+
+            return stopped;
         }
 
         private double CalculateSSE(Cluster cluster)
