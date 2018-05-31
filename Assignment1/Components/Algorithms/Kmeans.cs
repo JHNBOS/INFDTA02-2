@@ -11,59 +11,57 @@ namespace Assignment1.Components.Algorithms
         private List<Vector> Centroids { get; set; }
         private int Clusters { get; set; }
         private int Iterations { get; set; }
-        private int K { get; set; }
         private double SSE { get; set; }
-        private Cluster Best { get; set; }
+        private int BestCluster { get; set; }
         private List<Result> Results { get; set; }
 
-        public Kmeans(List<Vector> data, int iterations, int k, int cluster)
+        public Kmeans(List<Vector> data, int iterations, int cluster)
         {
             this.Data = data;
             this.Clusters = cluster;
             this.Centroids = new List<Vector>();
             this.Iterations = iterations;
-            this.K = k;
         }
 
-        //public List<Result> Run(int times)
-        //{
-        //    var results = new List<Result>();
+        public void Run()
+        {
+            var results = new List<Result>();
 
-        //    var temp = 0d;
-        //    this.GenerateClusters();
+            var temp = 0d;
+            this.GenerateCentroids();
 
-        //    for (int i = 0; i < times; i++)
-        //    {
-        //        this.AssignObservations();
-        //        foreach (var cluster in this.Clusters)
-        //        {
-        //            SSE = this.CalculateSSE(cluster);
-        //            if (temp < SSE)
-        //            {
-        //                temp = SSE;
-        //                Best = cluster;
-        //            }
+            this.AssignObservations();
+            foreach (var centroid in this.Centroids)
+            {
+                var centroidNumber = this.Centroids.IndexOf(centroid);
+                SSE = this.CalculateSSE(centroidNumber);
+                if (temp < SSE)
+                {
+                    temp = SSE;
+                    BestCluster = centroidNumber;
+                }
 
-        //            if (results.FirstOrDefault(q => q.Cluster == cluster) == null)
-        //            {
-        //                results.Add(new Result
-        //                {
-        //                    Cluster = cluster,
-        //                    SSE = SSE
-        //                });
-        //            }
+                if (results.FirstOrDefault(q => q.Centroid == centroidNumber) == null)
+                {
+                    results.Add(new Result
+                    {
+                        Centroid = centroidNumber,
+                        SSE = SSE
+                    });
+                }
+            }
 
-        //        }
-        //    }
+            this.Print();
 
-        //    Console.WriteLine("Best cluster is " + Best.Id);
-        //    return results.OrderBy(o => o.SSE).Take(4).ToList();
-        //}
+            Console.WriteLine("-----------------------------------------------\n");
+            Console.WriteLine("Best cluster is cluster " + BestCluster);
+        }
 
         private void GenerateCentroids()
         {
             var random = new Random();
-            for (int i = 0; i < this.K; i++)
+
+            while (this.Centroids.Count < this.Clusters)
             {
                 var randomIndex = random.Next(0, this.Data.Count);
                 var centroid = this.Data.ElementAtOrDefault(randomIndex);
@@ -131,15 +129,33 @@ namespace Assignment1.Components.Algorithms
             return stopped;
         }
 
-        private double CalculateSSE(Cluster cluster)
+        private double CalculateSSE(int centroid)
         {
             double SSE = 0;
-            foreach (var point in cluster.Points)
+            var clusterPoints = this.Data.Where(q => q.Centroid == centroid).ToList();
+
+            foreach (var point in clusterPoints)
             {
                 SSE += Math.Pow(point.Distance.Value, 2);
             }
 
             return SSE;
+        }
+
+        private void Print()
+        {
+            Console.WriteLine("K-means\n");
+            Console.WriteLine(" - Amount of iterations: " + this.Iterations);
+            Console.WriteLine(" - Amount of clusters: " + this.Clusters);
+            Console.WriteLine("-----------------------------------------------\n");
+
+            for (int centroid = 0; centroid < this.Centroids.Count; centroid++)
+            {
+                var cluster = this.Data.Where(q => q.Centroid == centroid).ToList();
+
+                Console.WriteLine("Cluster " + centroid + " contains " + cluster.Count + " vectors.");
+                Console.WriteLine("Sum of squared errors for cluster " + centroid + ": " + this.CalculateSSE(centroid) + "\n");
+            }
         }
     }
 }
