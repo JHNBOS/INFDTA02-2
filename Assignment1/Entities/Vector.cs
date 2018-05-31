@@ -15,6 +15,11 @@ namespace Assignment1.Entities
             this.Points = new List<float>();
         }
 
+        public Vector(List<float> points)
+        {
+            this.Points = points;
+        }
+
         public Vector(int size)
         {
             this.Points = new List<float>();

@@ -61,7 +61,7 @@ namespace Assignment1.Components.Algorithms
         {
             var random = new Random();
 
-            while (this.Centroids.Count < this.Clusters)
+            for (int i = 0; i < this.Clusters; i++)
             {
                 var randomIndex = random.Next(0, this.Data.Count);
                 var centroid = this.Data.ElementAtOrDefault(randomIndex);
@@ -69,6 +69,10 @@ namespace Assignment1.Components.Algorithms
                 if (!this.Centroids.Contains(centroid))
                 {
                     this.Centroids.Add(centroid);
+                }
+                else
+                {
+                    i--;
                 }
             }
         }
@@ -83,7 +87,7 @@ namespace Assignment1.Components.Algorithms
                     var smallestDistance = double.PositiveInfinity;
                     foreach (var centroid in this.Centroids)
                     {
-                        var distance = new Euclidian().Calculate(vector, centroid);
+                        var distance = new Euclidian().Calculate(centroid, vector);
                         if (distance < smallestDistance)
                         {
                             smallestDistance = distance;
@@ -97,33 +101,52 @@ namespace Assignment1.Components.Algorithms
                     }
                 }
 
-                this.UpdateCentroids();
+                var newCentroids = this.UpdateCentroids();
 
-                if (StoppedChanging(currentCentroids))
+                if (this.StoppedChanging(newCentroids) && i != 0)
                 {
-                    Console.WriteLine("Finished in " + i + " iterations");
+                    Console.WriteLine("Stopped after " + i + " iterations.");
                     break;
                 }
             }
         }
 
-        private void UpdateCentroids()
+        private List<Vector> UpdateCentroids()
         {
+            var newCentroids = new List<Vector>();
+            var size = this.Data.First().Points.Count;
+
             for (int currentCentroid = 0; currentCentroid < this.Clusters; currentCentroid++)
             {
                 var clusterPoints = this.Data.Where(q => q.Centroid == currentCentroid).ToList();
                 var newCluster = new Vector(this.Data.First().Points.Count);
 
-                this.Centroids[currentCentroid] = newCluster;
+                var means = new List<float>(new float[size]);
+                for (int j = 0; j < clusterPoints.Count; j++)
+                {
+                    for (int k = 0; k < size; k++)
+                    {
+                        means[k] += clusterPoints[j].Points[k];
+                    }
+
+                    means[j] /= clusterPoints.Count;
+                }
+
+                newCentroids.Add(new Vector(means));
             }
+
+            return newCentroids;
         }
 
-        private bool StoppedChanging(List<Vector> oldCentroids)
+        private bool StoppedChanging(List<Vector> newCentroid)
         {
             var stopped = false;
-            if (this.Centroids.Except(oldCentroids).ToList() == oldCentroids)
+            for (int i = 0; i < this.Clusters; i++)
             {
-                stopped = true;
+                if (this.Centroids[i].Points.SequenceEqual(newCentroid[i].Points))
+                {
+                    stopped = true;
+                }
             }
 
             return stopped;
@@ -136,7 +159,7 @@ namespace Assignment1.Components.Algorithms
 
             foreach (var point in clusterPoints)
             {
-                SSE += Math.Pow(point.Distance.Value, 2);
+                SSE += Math.Pow(new Euclidian().Calculate(this.Centroids[centroid], point), 2);
             }
 
             return SSE;
