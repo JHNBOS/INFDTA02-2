@@ -12,6 +12,7 @@ namespace Assignment2.Components.Algorithms
         private bool Elitism { get; set; }
         private int PopulationSize { get; set; }
         private int Iterations { get; set; }
+        private Random random;
 
         public GeneticAlgorithm(double crossoverRate, double mutationRate, bool elitism, int populationSize, int iterations)
         {
@@ -20,31 +21,34 @@ namespace Assignment2.Components.Algorithms
             this.Elitism = elitism;
             this.PopulationSize = populationSize;
             this.Iterations = iterations;
+            this.random = new Random();
         }
 
         public void Run()
         {
-            var populationWithFitness = new Dictionary<Ind, double>();
-            for (int i = 0; i < this.PopulationSize; i++)
+            for (int iteration = 0; iteration < this.Iterations; iteration++)
             {
-                var individual = this.CreateIndividual();
-                var fitness = this.CalculateFitness(individual);
+                var populationWithFitness = new Dictionary<Ind, double>();
+                for (int i = 0; i < this.PopulationSize; i++)
+                {
+                    var individual = this.CreateIndividual();
+                    var fitness = this.CalculateFitness(individual);
 
-                populationWithFitness.Add(individual, fitness);
+                    populationWithFitness.Add(individual, fitness);
+                }
+
+                var parents = this.SelectTwoParent(populationWithFitness.Keys.ToArray(), populationWithFitness.Values.ToArray());
+                var children = this.CrossOver(parents);
             }
-
-            var parents = this.SelectTwoParent(populationWithFitness.Keys.ToArray(), populationWithFitness.Values.ToArray());
-            this.CrossOver(parents);
         }
 
         private Ind CreateIndividual()
         {
-            var random = new Random();
             var individual = "";
 
             for (int i = 0; i < 5; i++)
             {
-                if (random.NextDouble() > 0.5)
+                if (this.random.NextDouble() > 0.5)
                 {
                     individual += 1;
                 }
@@ -78,9 +82,16 @@ namespace Assignment2.Components.Algorithms
             return new Tuple<Ind, Ind>(parentOne, parentTwo);
         }
 
-        private void CrossOver(Tuple<Ind, Ind> parents)
+        private Tuple<Ind, Ind> CrossOver(Tuple<Ind, Ind> parents)
         {
+            int positionToSplit = this.random.Next(0, parents.Item1.Binary.Length);
+            Ind childOne = new Ind();
+            Ind childTwo = new Ind();
 
+            childOne.Binary = parents.Item1.Binary.Substring(0, positionToSplit) + parents.Item2.Binary.Substring(positionToSplit);
+            childTwo.Binary = parents.Item2.Binary.Substring(0, positionToSplit) + parents.Item1.Binary.Substring(positionToSplit);
+
+            return new Tuple<Ind, Ind>(childOne, childTwo);
         }
     }
 }
