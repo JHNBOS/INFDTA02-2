@@ -38,7 +38,11 @@ namespace Assignment2.Components.Algorithms
                 }
 
                 var parents = this.SelectTwoParent(populationWithFitness.Keys.ToArray(), populationWithFitness.Values.ToArray());
-                var children = this.CrossOver(parents);
+                var offspring = this.CrossOver(parents);
+
+                var mutatedChildOne = this.Mutation(offspring.Item1, this.MutationRate);
+                var mutatedChildTwo = this.Mutation(offspring.Item2, this.MutationRate);
+                var mutatedOffspring = new Tuple<Ind, Ind>(mutatedChildOne, mutatedChildTwo);
             }
         }
 
@@ -93,5 +97,23 @@ namespace Assignment2.Components.Algorithms
 
             return new Tuple<Ind, Ind>(childOne, childTwo);
         }
+
+        private Ind Mutation(Ind individual, double mutationRate)
+        {
+            Ind mutatedIndividual = individual;
+            var binaryDigits = mutatedIndividual.Binary.ToCharArray();
+
+            for (int character = 0; character < binaryDigits.Length; character++)
+            {
+                if (random.NextDouble() < mutationRate)
+                {
+                    binaryDigits[character] = binaryDigits[character] == '0' ? '1' : '0';
+                }
+            }
+
+            mutatedIndividual.Binary = binaryDigits.ToString();
+            return mutatedIndividual;
+        }
+
     }
 }
