@@ -18,18 +18,30 @@ namespace Assignment2.Models
             this.Binary = binary;
         }
 
-        public Ind(int value)
+        public Ind(double value)
         {
-            this.Binary = Convert.ToString(value, 2);
+            this.Binary = Convert.ToString(value);
         }
 
         #endregion
 
         #region Getters
 
-        public int Value()
+        public double Value()
         {
-            return int.Parse(this.Binary);
+            double sum = 0;
+
+            var bits = this.Binary.ToCharArray();
+            for (int i = 0; i < bits.Length; i++)
+            {
+                var bit = bits[i];
+                if (bit == '1')
+                {
+                    sum += Math.Pow(2, i);
+                }
+            }
+
+            return sum;
         }
 
         #endregion

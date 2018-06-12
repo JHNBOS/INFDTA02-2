@@ -8,8 +8,12 @@ namespace Assignment2
         static void Main(string[] args)
         {
             var geneticAlgoritm = new GeneticAlgorithm(0.85, 0.01, true, 10, 50);
-            geneticAlgoritm.Run();
 
+            // Tests
+            //geneticAlgoritm.TestFitness();
+            //geneticAlgoritm.TestCrossover();
+
+            geneticAlgoritm.Run();
             Console.ReadKey();
         }
     }

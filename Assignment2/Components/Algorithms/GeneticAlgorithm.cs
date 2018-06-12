@@ -54,10 +54,11 @@ namespace Assignment2.Components.Algorithms
             // recompute the fitnesses on the final population and return the best individual
             var finalFitnesses = Enumerable.Range(0, this.PopulationSize).Select(s => CalculateFitness(currentPopulation[s])).ToArray();
             Console.WriteLine("Genetic algorithm");
-            Console.WriteLine("Average Fitness of last population " + finalFitnesses.Average());
-            Console.WriteLine("Best Fitness of last population " + finalFitnesses.OrderBy(x => x).Last());
-            //return currentPopulation.Select((individual, index) => new Tuple<Ind, double>(individual, finalFitnesses[index])).OrderByDescending(tuple => tuple.Item2).First().Item1;
+            Console.WriteLine("Average fitness: " + finalFitnesses.Average());
+            Console.WriteLine("Best fitness: " + finalFitnesses.OrderBy(x => x).Last());
         }
+
+        #region Private Methods
 
         private Ind[] CreatePopulation()
         {
@@ -71,9 +72,9 @@ namespace Assignment2.Components.Algorithms
                     {
                         individuals.Add(individual);
                     }
-               }
+                }
             }
-            
+
             return individuals.ToArray();
         }
 
@@ -113,7 +114,7 @@ namespace Assignment2.Components.Algorithms
 
         private double CalculateFitness(Ind individual)
         {
-            var fitness = -(Math.Pow(individual.Value(), 2) + (7 * individual.Value()));
+            var fitness = Math.Pow(individual.Value(), 2) + 7 * individual.Value();
             return fitness;
         }
 
@@ -134,7 +135,7 @@ namespace Assignment2.Components.Algorithms
 
         private Tuple<Ind, Ind> CrossOver(Tuple<Ind, Ind> parents)
         {
-            int positionToSplit = this.random.Next(0, parents.Item1.Binary.Length);
+            int positionToSplit = 2;
             Ind childOne = new Ind();
             Ind childTwo = new Ind();
 
@@ -161,5 +162,49 @@ namespace Assignment2.Components.Algorithms
             return mutatedIndividual;
         }
 
+        #endregion
+
+        #region Tests
+
+        public void TestFitness()
+        {
+            var individualOne = new Ind("10101");
+            var individualTwo = new Ind("11000");
+
+            var resultOne = this.CalculateFitness(individualOne);
+            var resultTwo = this.CalculateFitness(individualTwo);
+
+            //-(Math.Pow(21, 2)) + (7 * 21); == 441 + 147 = 558
+            //-(Math.Pow(3, 2)) + (7 * 3); == 9 + 21 = 30
+
+            Console.WriteLine("\n\nFITNESS\n-------------------");
+            Console.WriteLine("Individual #1:");
+            Console.WriteLine("  Expected ==> (-)558");
+            Console.WriteLine("  Actual   ==> " + resultOne);
+            Console.WriteLine("");
+            Console.WriteLine("Individual #2:");
+            Console.WriteLine("  Expected ==> (-)30");
+            Console.WriteLine("  Actual   ==> " + resultTwo);
+        }
+
+        public void TestCrossover()
+        {
+            var individualOne = new Ind("10101");
+            var individualTwo = new Ind("11000");
+
+            //With positionToSplit manually set at 2
+            var result = this.CrossOver(new Tuple<Ind, Ind>(individualOne, individualTwo));
+
+            Console.WriteLine("\n\nCROSSOVER\n-------------------");
+            Console.WriteLine("Individual #1:");
+            Console.WriteLine("  Expected ==> 10000");
+            Console.WriteLine("  Actual   ==> " + result.Item1.Binary);
+            Console.WriteLine("");
+            Console.WriteLine("Individual #2:");
+            Console.WriteLine("  Expected ==> 11101");
+            Console.WriteLine("  Actual   ==> " + result.Item2.Binary);
+        }
+
+        #endregion
     }
 }
