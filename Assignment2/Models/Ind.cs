@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Assignment2.Entities
+namespace Assignment2.Models
 {
     public class Ind
     {
@@ -29,7 +29,7 @@ namespace Assignment2.Entities
 
         public int Value()
         {
-            return Convert.ToInt32(this.Binary, 2);
+            return int.Parse(this.Binary);
         }
 
         #endregion

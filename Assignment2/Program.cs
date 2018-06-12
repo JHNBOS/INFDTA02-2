@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Assignment2.Components.Algorithms;
+using System;
 
 namespace Assignment2
 {
@@ -6,7 +7,10 @@ namespace Assignment2
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            var geneticAlgoritm = new GeneticAlgorithm(0.85, 0.01, true, 10, 50);
+            geneticAlgoritm.Run();
+
+            Console.ReadKey();
         }
     }
 }

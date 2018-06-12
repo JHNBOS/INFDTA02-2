@@ -1,4 +1,4 @@
-﻿using Assignment2.Entities;
+﻿using Assignment2.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,29 +26,75 @@ namespace Assignment2.Components.Algorithms
 
         public void Run()
         {
-            for (int iteration = 0; iteration < this.Iterations; iteration++)
+            // Get initial population
+            var initialPopulation = this.CreatePopulation();
+
+            var currentPopulation = initialPopulation;
+            for (int gen = 0; gen < this.Iterations; gen++)
             {
-                var populationWithFitness = new Dictionary<Ind, double>();
+                var nextPopulation = new List<Ind>();
+
+                // Calculate fitness of population
+                var fitness = CalculateFitnessOfPopulation(currentPopulation);
+
+                for (int ind = 0; ind < this.PopulationSize; ind++)
+                {
+                    var parents = this.SelectTwoParent(initialPopulation, fitness);
+                    var offspring = this.CrossOver(parents);
+                    var mutatedOffspring = new Tuple<Ind, Ind>(this.Mutation(offspring.Item1, this.MutationRate),
+                        this.Mutation(offspring.Item2, this.MutationRate));
+
+                    nextPopulation.Add(mutatedOffspring.Item1);
+                    nextPopulation.Add(mutatedOffspring.Item2);
+                }
+
+                currentPopulation = nextPopulation.ToArray();
+            }
+
+            // recompute the fitnesses on the final population and return the best individual
+            var finalFitnesses = Enumerable.Range(0, this.PopulationSize).Select(s => CalculateFitness(currentPopulation[s])).ToArray();
+            Console.WriteLine("Genetic algorithm");
+            Console.WriteLine("Average Fitness of last population " + finalFitnesses.Average());
+            Console.WriteLine("Best Fitness of last population " + finalFitnesses.OrderBy(x => x).Last());
+            //return currentPopulation.Select((individual, index) => new Tuple<Ind, double>(individual, finalFitnesses[index])).OrderByDescending(tuple => tuple.Item2).First().Item1;
+        }
+
+        private Ind[] CreatePopulation()
+        {
+            var individuals = new List<Ind>();
+            while (individuals.Count < this.PopulationSize)
+            {
                 for (int i = 0; i < this.PopulationSize; i++)
                 {
                     var individual = this.CreateIndividual();
-                    var fitness = this.CalculateFitness(individual);
-
-                    populationWithFitness.Add(individual, fitness);
-                }
-
-                var parents = this.SelectTwoParent(populationWithFitness.Keys.ToArray(), populationWithFitness.Values.ToArray());
-                var offspring = this.CrossOver(parents);
-
-                var mutatedChildOne = this.Mutation(offspring.Item1, this.MutationRate);
-                var mutatedChildTwo = this.Mutation(offspring.Item2, this.MutationRate);
-                var mutatedOffspring = new Tuple<Ind, Ind>(mutatedChildOne, mutatedChildTwo);
+                    if (individuals.FirstOrDefault(q => q.Binary == individual.Binary) == null)
+                    {
+                        individuals.Add(individual);
+                    }
+               }
             }
+            
+            return individuals.ToArray();
+        }
+
+        private double[] CalculateFitnessOfPopulation(Ind[] population)
+        {
+            var fitnesses = new List<double>();
+            while (fitnesses.Count < this.PopulationSize)
+            {
+                for (int i = 0; i < this.PopulationSize; i++)
+                {
+                    var fitness = this.CalculateFitness(population[i]);
+                    fitnesses.Add(fitness);
+                }
+            }
+
+            return fitnesses.ToArray();
         }
 
         private Ind CreateIndividual()
         {
-            var individual = "";
+            string individual = "";
 
             for (int i = 0; i < 5; i++)
             {
@@ -111,7 +157,7 @@ namespace Assignment2.Components.Algorithms
                 }
             }
 
-            mutatedIndividual.Binary = binaryDigits.ToString();
+            mutatedIndividual.Binary = new string(binaryDigits);
             return mutatedIndividual;
         }
 
