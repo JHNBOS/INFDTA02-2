@@ -145,19 +145,26 @@ namespace Assignment1.Components.Algorithms
             for (int centroid = 0; centroid < this.Centroids.Count; centroid++)
             {
                 var cluster = this.Data.Where(q => q.Centroid == centroid).ToList();
+                var newCluster = new Vector(this.Data.First().Points.Count);
+
+                // Add all points as one
+                for (int i = 0; i < cluster.Count(); i++)
+                {
+                    for (int j = 0; j < newCluster.Points.Count; j++)
+                    {
+                        newCluster.Points[j] += cluster[i].Points[j];
+                    }
+                }
 
                 Console.WriteLine("\nCluster " + (centroid + 1) + " contains " + cluster.Count + " customers.");
                 Console.WriteLine("SSE: " + this.CalculateSSE(centroid) + "\n");
 
-                foreach (var observation in cluster.Distinct())
+                foreach (var observation in newCluster.Points.Select((value, key) => new { value, key })
+                    .ToDictionary(x => x.key, v => v.value).OrderByDescending(x => x.Value))
                 {
-                    for (int key = 0; key < observation.Points.Count; key++)
+                    if (observation.Value > 0)
                     {
-                        var value = observation.Points.ElementAtOrDefault(key);
-                        if (value > 0)
-                        {
-                            Console.Write("Offer " + (key + 1) + " was taken " + value + " times.\n");
-                        }
+                        Console.Write("Offer " + (observation.Key + 1) + " was taken " + observation.Value + " times.\n");
                     }
                 }
             }
