@@ -1,4 +1,4 @@
-﻿using Assignment1.Entities;
+﻿using Assignment1.Models;
 using System;
 
 namespace Assignment1.Components.Algorithms

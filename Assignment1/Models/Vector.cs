@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Assignment1.Entities
+namespace Assignment1.Models
 {
     public class Vector
     {

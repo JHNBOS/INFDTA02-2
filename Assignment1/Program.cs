@@ -11,11 +11,12 @@ namespace Assignment1
             var parser = new Parser();
             var data = parser.Parse(',', @"./Data/WineData.csv");
 
-            var iterations = 5;
+            var iterations = 100;
             var clusters = 4;
-            
+
             var kMeans = new Kmeans(data, iterations, clusters);
             kMeans.Run();
+            kMeans.Print();
 
             Console.Read();
         }
