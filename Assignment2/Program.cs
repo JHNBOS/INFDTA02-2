@@ -12,6 +12,7 @@ namespace Assignment2
             // Tests
             //geneticAlgoritm.TestFitness();
             //geneticAlgoritm.TestCrossover();
+            //geneticAlgoritm.TestMutation();
 
             geneticAlgoritm.Run();
             Console.ReadKey();

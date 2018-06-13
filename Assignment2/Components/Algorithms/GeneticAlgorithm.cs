@@ -7,12 +7,18 @@ namespace Assignment2.Components.Algorithms
 {
     public class GeneticAlgorithm
     {
+        #region Properties
+
         private double CrossoverRate { get; set; }
         private double MutationRate { get; set; }
         private bool Elitism { get; set; }
         private int PopulationSize { get; set; }
         private int Iterations { get; set; }
         private Random random;
+
+        #endregion
+
+        #region Constructor
 
         public GeneticAlgorithm(double crossoverRate, double mutationRate, bool elitism, int populationSize, int iterations)
         {
@@ -23,6 +29,8 @@ namespace Assignment2.Components.Algorithms
             this.Iterations = iterations;
             this.random = new Random();
         }
+
+        #endregion
 
         public void Run()
         {
@@ -39,7 +47,7 @@ namespace Assignment2.Components.Algorithms
 
                 for (int ind = 0; ind < this.PopulationSize; ind++)
                 {
-                    var parents = this.SelectTwoParent(initialPopulation, fitness);
+                    var parents = this.SelectTwoParents(initialPopulation, fitness);
                     var offspring = this.CrossOver(parents);
                     var mutatedOffspring = new Tuple<Ind, Ind>(this.Mutation(offspring.Item1, this.MutationRate),
                         this.Mutation(offspring.Item2, this.MutationRate));
@@ -52,10 +60,10 @@ namespace Assignment2.Components.Algorithms
             }
 
             // recompute the fitnesses on the final population and return the best individual
-            var finalFitnesses = Enumerable.Range(0, this.PopulationSize).Select(s => CalculateFitness(currentPopulation[s])).ToArray();
+            var fitnesses = Enumerable.Range(0, this.PopulationSize).Select(s => CalculateFitness(currentPopulation[s])).ToArray();
             Console.WriteLine("Genetic algorithm");
-            Console.WriteLine("Average fitness: " + finalFitnesses.Average());
-            Console.WriteLine("Best fitness: " + finalFitnesses.OrderBy(x => x).Last());
+            Console.WriteLine("Average fitness: " + fitnesses.Average());
+            Console.WriteLine("Best fitness: " + fitnesses.OrderBy(x => x).Last());
         }
 
         #region Private Methods
@@ -118,19 +126,31 @@ namespace Assignment2.Components.Algorithms
             return fitness;
         }
 
-        private Tuple<Ind, Ind> SelectTwoParent(Ind[] population, double[] fitnesses)
+        private Tuple<Ind, Ind> SelectTwoParents(Ind[] population, double[] fitnesses)
         {
-            // Get highest fitness (parent one)
-            var fitnessParentOne = fitnesses.Max();
-            var indexParentOne = Array.IndexOf(fitnesses, fitnessParentOne);
-            var parentOne = population[indexParentOne];
+            Ind parentOne = null;
+            Ind parentTwo = null;
 
-            // Get second highest fitness (parent two)
-            var fitnessParentTwo = fitnesses.Skip(indexParentOne).ToArray().Max();
-            var indexParentTwo = Array.IndexOf(fitnesses, fitnessParentTwo);
-            var parentTwo = population[indexParentTwo];
+            parentOne = this.RouletWheelSelection(population, fitnesses);
+            parentTwo = this.RouletWheelSelection(population, fitnesses);
 
             return new Tuple<Ind, Ind>(parentOne, parentTwo);
+        }
+
+        private Ind RouletWheelSelection(Ind[] population, double[] fitnesses)
+        {
+            var sumOfFitnesses = fitnesses.Sum();
+            var probabilities = fitnesses.Select(s => s / sumOfFitnesses).ToList();
+
+            var index = 0;
+            var sum = probabilities[0];
+            while (random.Next() <= sum)
+            {
+                index++;
+                sum += probabilities[index];
+            }
+
+            return population[index];
         }
 
         private Tuple<Ind, Ind> CrossOver(Tuple<Ind, Ind> parents)
@@ -203,6 +223,25 @@ namespace Assignment2.Components.Algorithms
             Console.WriteLine("Individual #2:");
             Console.WriteLine("  Expected ==> 11101");
             Console.WriteLine("  Actual   ==> " + result.Item2.Binary);
+        }
+
+        public void TestMutation()
+        {
+            var individualOne = new Ind("10101");
+            var individualTwo = new Ind("11000");
+
+            //With mutation rate of 10000, to eliminate randomness
+            var resultOne = this.Mutation(individualOne, 10000);
+            var resultTwo = this.Mutation(individualTwo, 10000);
+
+            Console.WriteLine("\n\nMUTATION\n-------------------");
+            Console.WriteLine("Individual #1:");
+            Console.WriteLine("  Expected ==> 01010");
+            Console.WriteLine("  Actual   ==> " + resultOne.Binary);
+            Console.WriteLine("");
+            Console.WriteLine("Individual #2:");
+            Console.WriteLine("  Expected ==> 00111");
+            Console.WriteLine("  Actual   ==> " + resultTwo.Binary);
         }
 
         #endregion
